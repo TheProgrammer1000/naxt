@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "module": "CommonJS", // or "ES2020" is fine too
+        "moduleResolution": "node", //  ←  **important**
+        "esModuleInterop": true,
+        "resolveJsonModule": true,
+        "strict": false
+    },
+    "include": ["src"]
+}

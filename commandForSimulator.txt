@@ -1,0 +1,9 @@
+
+First terminal
+
+# clear Metro cache too, just in case:
+npx expo start --dev-client -c
+
+
+Other terminal:
+npx react-native run-ios
