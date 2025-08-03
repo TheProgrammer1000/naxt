@@ -1,0 +1,211 @@
+import { useRouter, Link } from "expo-router";
+import {
+    LogBox,
+    StyleSheet,
+    Text,
+    View,
+    TextInput,
+    TouchableOpacity,
+    Button,
+    Alert,
+} from "react-native";
+import { scale, verticalScale, moderateScale } from "react-native-size-matters";
+import { colors } from "@/theme";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+
+import { loginSuccess } from "@/lib/redux/authSlice";
+import { api } from "@/lib/services/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+// import { Button } from "@react-navigation/elements";
+
+LogBox.ignoreAllLogs(true);
+
+export default function Login() {
+    const router = useRouter();
+    const dispatch = useDispatch();
+
+    const [showPassword, setShowPassword] = useState(true);
+
+    const [showForCompany, setShowForCompany] = useState(false);
+
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+
+    const onLogin = async () => {
+        try {
+            const res = await api.post("/users/login", {
+                email: email,
+                password: password,
+            });
+
+            const { userId, type: userType } = res.data;
+
+            dispatch(
+                loginSuccess({
+                    userId: userId,
+                    userType: userType,
+                })
+            ); // ⭐️
+
+            if (userType == "investor") {
+                router.replace("/(investor)/match");
+            } else if (userType == "company") {
+                router.replace("/(company)/post");
+            }
+        } catch (err: any) {
+            console.error(err.message);
+
+            const message =
+                err.response?.data?.message ||
+                "Något gick fel. Kontrollera dina uppgifter och försök igen.";
+            Alert.alert("Fel vid inloggning", message);
+        } finally {
+        }
+    };
+
+    return (
+        <View style={styles.full_container}>
+            <View style={styles.login_container}>
+                <Text style={styles.header_text}>Logga in</Text>
+                <View style={styles.input_container}>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="E-post"
+                        inputMode={"email"}
+                        placeholderTextColor="#888"
+                        value={email}
+                        onChange={(e) => setEmail(e.nativeEvent.text)}
+                    />
+
+                    <View style={styles.password_container}>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Lösenord"
+                            inputMode={"text"}
+                            secureTextEntry={showPassword}
+                            placeholderTextColor="#888"
+                            value={password}
+                            onChange={(e) => setPassword(e.nativeEvent.text)}
+                        />
+                        <TouchableOpacity
+                            style={styles.toggle}
+                            onPress={() => setShowPassword(!showPassword)}
+                        >
+                            <Text style={styles.toggleText}>Visa</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+
+                <TouchableOpacity>
+                    <Text style={styles.login_footer_text}>
+                        Problem att logga in?
+                    </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                    style={styles.button}
+                    activeOpacity={0.7}
+                    onPress={onLogin}
+                >
+                    <Text style={styles.button_text}>Logga in</Text>
+                </TouchableOpacity>
+            </View>
+
+            <TouchableOpacity
+                style={styles.footer_text}
+                onPress={() => router.replace("/register")}
+            >
+                <Text>Har du inget konto? Registrera</Text>
+            </TouchableOpacity>
+        </View>
+    );
+}
+
+export const styles = StyleSheet.create({
+    full_container: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+
+    login_container: {
+        gap: 25,
+        position: "relative",
+        width: scale(320),
+        padding: 15,
+        // borderWidth: 1,
+        // borderColor: "#000",
+    },
+
+    header_text: {
+        fontSize: 70,
+        textAlign: "center",
+        marginBottom: verticalScale(30),
+    },
+
+    header_company_container: {
+        borderColor: "#FFF",
+        borderWidth: 2,
+        padding: 10,
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: 20,
+        backgroundColor: colors.primary_color.dark_blue,
+    },
+
+    header_company_text: {
+        color: "#FFF",
+        fontSize: 25,
+    },
+
+    input_container: {
+        gap: 30,
+    },
+
+    input: {
+        borderWidth: 1,
+        borderColor: "rgba(0,0,0,0.2)",
+        borderRadius: 5,
+        width: "100%",
+        height: 48,
+        paddingLeft: scale(10),
+    },
+
+    password_container: {
+        position: "relative",
+        justifyContent: "center",
+        alignItems: "flex-end",
+    },
+
+    toggle: {
+        position: "absolute",
+        right: scale(10),
+    },
+
+    toggleText: {
+        fontSize: 16,
+    },
+
+    login_footer_text: {
+        textAlign: "center",
+        fontSize: 20,
+    },
+
+    button: {
+        backgroundColor: "#000",
+        height: verticalScale(50),
+        borderRadius: 8,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+
+    button_text: {
+        color: "#FFF",
+    },
+
+    footer_text: {
+        marginTop: verticalScale(20),
+    },
+});
