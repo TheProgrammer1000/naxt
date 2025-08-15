@@ -8,12 +8,12 @@ import {
     Image,
 } from "react-native";
 import { api } from "@/lib/services/api";
-import { baseURLDev } from "@/lib/services/api";
 import { UserCompanyMatch } from "@/lib/types/userCompanyMatch";
 import { Ionicons } from "@expo/vector-icons";
 import { useAppSelector } from "@/lib/redux/store";
 import { selectUserId } from "@/lib/redux/authSlice";
 import ModalPopup from "@/components/ModalPopup";
+// import { baseURL } from "@/lib/services/api";
 
 import { useIsFocused } from "@react-navigation/native";
 
@@ -77,7 +77,7 @@ export default function MatchesScreen() {
                                 {/* ← Use img_url here! */}
                                 <Image
                                     source={{
-                                        uri: `${baseURLDev}${item.imageUserUrl}`,
+                                        uri: `${api.defaults.baseURL}${item.imageUserUrl}`,
                                     }}
                                     style={styles.image}
                                     onError={(e) =>

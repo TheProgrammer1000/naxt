@@ -111,6 +111,8 @@ router.post("/login", async (req, res, next) => {
             password: string;
         };
 
+        console.log("email", email);
+        console.log("emapasswordl", password);
         const [rows] = await pool.query(
             "SELECT userID, password_hash, type FROM users WHERE email = ?",
             [email.toLowerCase()]

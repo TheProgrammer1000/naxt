@@ -37,6 +37,8 @@ export default function ModalPopup({
 
         console.log("result: ", result);
 
+        // console.log("item.api.baseURL:", api.baseURL);
+
         fetchLikedCompanies();
         showModal(); // ensure modal closes
     };

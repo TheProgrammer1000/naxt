@@ -2,7 +2,7 @@ import { Text } from "@react-navigation/elements";
 import { useState } from "react";
 import { StyleSheet, View, Image } from "react-native";
 
-import { baseURLDev } from "@/lib/services/api";
+import { api } from "@/lib/services/api";
 
 type Props = {
     img_url: string;
@@ -20,7 +20,7 @@ export default function ProfileCircle({ img_url, size }: Props) {
             {img_url ? (
                 <Image
                     source={{
-                        uri: `${baseURLDev}${img_url}`,
+                        uri: `${api.defaults.baseURL}${img_url}`,
                     }}
                     style={[
                         {
